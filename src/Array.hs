@@ -3,12 +3,11 @@
 module Array where
 
 import           Control.Monad.ST
-import           Data.Array
 import           Data.Array.ST
-import           Data.ByteString   (ByteString)
-import qualified Data.ByteString   as B
+import           Data.Array.Unboxed
+import           Data.ByteString    (ByteString)
+import qualified Data.ByteString    as B
 import           Data.List
-import           Data.Maybe
 import           Data.Queue.Simple
 import           GHC.Word
 
@@ -58,25 +57,18 @@ data Step = S
 
 -- Word64 works for n <= 10
 -- Because of sharing, this gains little--a list has (higher) constant cost
-newtype Steps = Steps Word64
-instance Show Steps where
-  show (Steps i) = "Steps \"" ++ (unfoldr step i) ++ "\""
-    where unenc 0 = 'S'
-          unenc 1 = 'U'
-          unenc _ = error "strange division."
-          step 1 = Nothing
-          step k = Just (unenc (k `mod` 2), k `div` 2)
+type Steps = Word64
 
 newSteps :: Steps
-newSteps = Steps 1
+newSteps = 1
 
 (<:) :: Steps -> Step -> Steps
-(Steps s) <: S = Steps (s*2)
-(Steps s) <: U = Steps (s*2 + 1)
+s <: S = s*2
+s <: U = s*2 + 1
 infixl 3 <:
 
 slength :: Steps -> Integer
-slength (Steps s) = floor . logBase (2::Double) . fromIntegral $ s
+slength s = floor . logBase (2::Double) . fromIntegral $ s
 
 -- Algorithm
 
@@ -84,16 +76,16 @@ fact :: (Integral a) => a -> a
 fact n = product [1..n]
 
 -- Queue (Perm,Steps,Step)
-search :: Word8 -> ST s (STArray s Word64 (Maybe Steps))
+search :: Word8 -> ST s (STUArray s Word64 Steps)
 search n = do
-  a <- newArray (0,(fact $ fromIntegral n) - 1) Nothing
-  writeArray a 0 (Just newSteps)
+  a <- newArray (0,(fact $ fromIntegral n) - 1) 0
+  writeArray a 0 newSteps
   qrecM step a initq
     where initq = fromList [(idPerm n,newSteps,S), (idPerm n,newSteps,U)] :: SimpleQueue (Perm,Steps,Step)
           step a (p,s,mv) = do
             e <- readArray a newi
-            if' (isNothing e) (writeArray a newi (Just news)) (return ())
-            return $ if' (isNothing e) (a,newq) (a,[])
+            if' (e==0) (writeArray a newi news) (return ())
+            return $ if' (e==0) (a,newq) (a,[])
             where newp = move mv p
                   newi = pIndex newp
                   news = s <: mv
@@ -101,12 +93,12 @@ search n = do
                     S -> [(newp,news,U)]
                     U -> [(newp,news,U), (newp,news,S)]
 
-longest :: Array Word64 (Maybe Steps) -> (Perm,Integer)
-longest = (idPerm 0,) . foldl max 0 . fmap (slength . fromJust . snd) . assocs
+longest :: UArray Word64 Steps -> (Perm,Integer)
+longest = (idPerm 0,) . foldl' max 0 . fmap (slength . snd) . assocs
 
 move :: Step -> Perm -> Perm
 move S = swap
 move U = unrot
 
 showLongest :: Word8 -> String
-showLongest n = show . longest $ runSTArray (search n)
+showLongest n = show . longest $ runSTUArray (search n)
