@@ -1,0 +1,52 @@
+name:                permGen
+version:             0.1.0.0
+synopsis:            Finding shortest generators of permutations.
+homepage:            https://github.com/isturdy/permGen
+license:             PublicDomain
+license-file:        UNLICENSE
+author:              Ian Sturdy
+maintainer:          sturdyi12@mail.wlu.edu
+category:            Mathematics
+build-type:          Simple
+cabal-version:       >=1.8
+stability:	     experimental
+tested-with:
+    GHC == 7.6.2
+
+executable permgen
+  main-is:           Main.hs
+  hs-source-dirs:    src
+  GHC-Options:       -Wall
+  build-depends:
+    base ==4.6.*,
+    array == 0.4.0.*,
+    bytestring ==0.10.*,
+    containers ==0.5.*,
+    q ==0.1.*
+
+library
+  hs-source-dirs:    src
+  exposed-modules:
+    Map
+    Array
+  GHC-Options:
+    -Wall
+  build-depends:
+    base ==4.6.*,
+    array == 0.4.0.*,
+    bytestring ==0.10.*,
+    containers ==0.5.*,
+    q ==0.1.*
+
+source-repository head
+  type: git
+  location: https://github.com/isturdy/permGen
+
+benchmark permGen-bench
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   bench
+  main-is:          Benchmarks.hs
+  build-depends:
+    permGen,
+    base,
+    criterion

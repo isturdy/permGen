@@ -1,0 +1,13 @@
+dist
+cabal-dev
+report.html
+
+*.o
+*.hi
+*.chi
+*.chs.h
+.virthualenv
+
+*.DS_Store
+
+\#*#
