@@ -42,7 +42,7 @@ unrot (Perm s) = Perm $ B.snoc t h
   where Just (h,t) = B.uncons s
 
 -- Exact integer encoding of permutations of up to 20 items
-pIndex :: Perm -> Word64
+pIndex :: Perm -> Int
 pIndex (Perm p) = step p (fromIntegral $ B.length p)
   where step _  1 = 0
         step p' n = (((fromIntegral h)-1)*(fact (n-1))) +
@@ -76,7 +76,7 @@ fact :: (Integral a) => a -> a
 fact n = product [1..n]
 
 -- Queue (Perm,Steps,Step)
-search :: Word8 -> ST s (STUArray s Word64 Steps)
+search :: Word8 -> ST s (STUArray s Int Steps)
 search n = do
   a <- newArray (0,(fact $ fromIntegral n) - 1) 0
   writeArray a 0 newSteps
@@ -93,7 +93,7 @@ search n = do
                     S -> [(newp,news,U)]
                     U -> [(newp,news,U), (newp,news,S)]
 
-longest :: UArray Word64 Steps -> (Perm,Integer)
+longest :: UArray Int Steps -> (Perm,Integer)
 longest = (idPerm 0,) . foldl' max 0 . fmap (slength . snd) . assocs
 
 move :: Step -> Perm -> Perm
