@@ -21,6 +21,7 @@ executable permgen
     base ==4.6.*,
     array == 0.4.0.*,
     bytestring ==0.10.*,
+    bytestring-trie ==0.2.*,
     containers ==0.5.*,
     q ==0.1.*
 
@@ -29,12 +30,14 @@ library
   exposed-modules:
     Map
     Array
+    Trie
   GHC-Options:
     -Wall
   build-depends:
     base ==4.6.*,
     array == 0.4.0.*,
     bytestring ==0.10.*,
+    bytestring-trie ==0.2.*,
     containers ==0.5.*,
     q ==0.1.*
 
