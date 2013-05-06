@@ -1,14 +1,18 @@
+{-# LANGUAGE RankNTypes    #-}
 {-# LANGUAGE TupleSections #-}
 
 module Array where
 
 import           Control.Monad.ST
-import           Data.Array.ST
-import           Data.Array.Unboxed
-import           Data.ByteString    (ByteString)
-import qualified Data.ByteString    as B
-import           Data.List
+import           Data.ByteString             (ByteString)
+import qualified Data.ByteString             as B
+import           Data.List                   hiding (replicate)
 import           Data.Queue.Simple
+import qualified Data.Vector.Generic         as V
+import           Data.Vector.Unboxed         (Vector)
+import qualified Data.Vector.Unboxed         as U
+import           Data.Vector.Unboxed.Mutable (STVector)
+import qualified Data.Vector.Unboxed.Mutable as MU
 import           GHC.Word
 
 if' :: Bool -> a -> a -> a
@@ -78,15 +82,15 @@ fact :: (Integral a) => a -> a
 fact n = product [1..n]
 
 -- Queue (Perm,Steps,Step)
-search :: Word8 -> ST s (STUArray s Int Steps)
+search :: Word8 -> ST s (STVector s Steps)
 search n = do
-  a <- newArray (0,(fact $ fromIntegral n) - 1) 0
-  writeArray a 0 newSteps
+  a <- MU.replicate (fact $ fromIntegral n) 0
+  MU.write a 0 newSteps
   qrecM step a initq
     where initq = fromList [(idPerm n,newSteps,S), (idPerm n,newSteps,U)] :: SimpleQueue (Perm,Steps,Step)
           step a (p,s,mv) = do
-            e <- readArray a newi
-            if' (e==0) (writeArray a newi news) (return ())
+            e <- MU.read a newi
+            if' (e==0) (MU.write a newi news) (return ())
             return $ if' (e==0) (a,newq) (a,[])
             where newp = move mv p
                   newi = pIndex newp
@@ -95,12 +99,12 @@ search n = do
                     S -> [(newp,news,U)]
                     U -> [(newp,news,U), (newp,news,S)]
 
-longest :: UArray Int Steps -> (Perm,Integer)
-longest = (idPerm 0,) . foldl' max 0 . fmap (slength . snd) . assocs
+longest :: Vector Steps -> (Perm,Integer)
+longest = (idPerm 0,) . V.foldl' (\a e -> max a (slength e)) 0
 
 move :: Step -> Perm -> Perm
 move S = swap
 move U = unrot
 
 showLongest :: Word8 -> String
-showLongest n = show . longest $ runSTUArray (search n)
+showLongest n = show . longest $ U.create (search n)
