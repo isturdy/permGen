@@ -85,12 +85,12 @@ fact n = product [1..n]
 search :: Word8 -> ST s (STVector s Steps)
 search n = do
   a <- MU.replicate (fact $ fromIntegral n) 0
-  MU.write a 0 newSteps
+  MU.unsafeWrite a 0 newSteps
   qrecM step a initq
     where initq = fromList [(idPerm n,newSteps,S), (idPerm n,newSteps,U)] :: SimpleQueue (Perm,Steps,Step)
           step a (p,s,mv) = do
-            e <- MU.read a newi
-            if' (e==0) (MU.write a newi news) (return ())
+            e <- MU.unsafeRead a newi
+            if' (e==0) (MU.unsafeWrite a newi news) (return ())
             return $ if' (e==0) (a,newq) (a,[])
             where newp = move mv p
                   newi = pIndex newp
