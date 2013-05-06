@@ -43,12 +43,14 @@ unrot (Perm s) = Perm $ B.snoc t h
 
 -- Exact integer encoding of permutations of up to 20 items
 pIndex :: Perm -> Int
-pIndex (Perm p) = step p (fromIntegral $ B.length p)
-  where step _  1 = 0
-        step p' n = (((fromIntegral h)-1)*(fact (n-1))) +
-                   step (adjust h t) (n-1)
-          where Just (h,t) = B.uncons p'
-        adjust e = B.map (\x -> if' (x>e) (x-1) x)
+pIndex (Perm p) = step (B.length p)
+  where step 1 = 0
+        step n = (step (n-1)) + ((fact (n-1)) * (indexLess 0 0))
+          where indexLess a i = case B.index p i of
+                  x | x == n' -> a
+                  x | x < n'  -> indexLess (a+1) (i+1)
+                  _           -> indexLess a     (i+1)
+                n' = fromIntegral n :: Word8
 
 --Representation of steps taken
 data Step = S
