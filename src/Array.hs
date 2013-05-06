@@ -18,16 +18,6 @@ import           GHC.Word
 if' :: Bool -> a -> a -> a
 if' True x _ = x
 if' False _ y = y
-
---Representation of permutations
--- newtype Perm = Perm Word64
--- deriving (Eq,Ord)
-
--- idPerm :: Perm
--- idPerm = Perm 0
-
--- swap
-
 newtype Perm = Perm ByteString
              deriving (Eq,Ord)
 instance Show Perm where
@@ -81,17 +71,17 @@ slength s = floor . logBase (2::Double) . fromIntegral $ s
 fact :: (Integral a) => a -> a
 fact n = product [1..n]
 
--- Queue (Perm,Steps,Step)
-search :: Word8 -> ST s (STVector s Steps)
-search n = do
+search :: Word8 -> Vector Steps
+search n = U.create $ do
   a <- MU.replicate (fact $ fromIntegral n) 0
   MU.unsafeWrite a 0 newSteps
   qrecM step a initq
-    where initq = fromList [(idPerm n,newSteps,S), (idPerm n,newSteps,U)] :: SimpleQueue (Perm,Steps,Step)
+    where initq :: SimpleQueue (Perm,Steps,Step)
+          initq = fromList [(idPerm n,newSteps,S), (idPerm n,newSteps,U)]
           step a (p,s,mv) = do
             e <- MU.unsafeRead a newi
-            if' (e==0) (MU.unsafeWrite a newi news) (return ())
-            return $ if' (e==0) (a,newq) (a,[])
+            if' (e==0) (MU.unsafeWrite a newi news >> return (a,newq))
+                       (return (a,[]))
             where newp = move mv p
                   newi = pIndex newp
                   news = s <: mv
@@ -100,11 +90,11 @@ search n = do
                     U -> [(newp,news,U), (newp,news,S)]
 
 longest :: Vector Steps -> (Perm,Integer)
-longest = (idPerm 0,) . V.foldl' (\a e -> max a (slength e)) 0
+longest = (idPerm 0,) . V.foldl' ((. slength) . max)) 0
 
 move :: Step -> Perm -> Perm
 move S = swap
 move U = unrot
 
 showLongest :: Word8 -> String
-showLongest n = show . longest $ U.create (search n)
+showLongest = show . longest . search
