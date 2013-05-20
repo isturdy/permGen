@@ -5,13 +5,11 @@ import           System.Environment
 
 import qualified Array              as A
 import qualified Map                as M
-import qualified Trie               as T
 
 handlers :: [(String, Word8 -> String)]
 handlers = [
     ("map",   M.showLongest)
   , ("array", A.showLongest)
-  , ("trie",  T.showLongest)
   ]
 
 main :: IO ()
