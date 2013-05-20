@@ -1,3 +1,5 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Util where
 
 import           Data.ByteString     (ByteString)
@@ -43,9 +45,9 @@ unrot (Perm s) = Perm $ B.snoc t h
 -- Exact integer encoding of permutations of up to 20 items
 pIndex :: Perm -> Int
 pIndex (Perm p) = step (B.length p)
-  where step 1 = 0
-        step n = (step (n-1)) + ((fact (n-1)) * (indexLess 0 0))
-          where indexLess a i = case B.index p i of
+  where step !1 = 0
+        step !n = (step (n-1)) + ((fact (n-1)) * (indexLess 0 0))
+          where indexLess !a !i = case B.index p i of
                   x | x == n' -> a
                   x | x < n'  -> indexLess (a+1) (i+1)
                   _           -> indexLess a     (i+1)

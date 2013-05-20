@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns  #-}
 {-# LANGUAGE RankNTypes    #-}
 {-# LANGUAGE TupleSections #-}
 
@@ -41,7 +42,7 @@ search n = U.create $ do
   qrecM step a initq
     where initq :: SimpleQueue (Perm,Steps,Step)
           initq = fromList [(idPerm n,newSteps,S), (idPerm n,newSteps,U)]
-          step a (p,s,mv) = do
+          step !a (p,s,mv) = do
             e <- MU.unsafeRead a newi
             if' (e==0) (MU.unsafeWrite a newi news >> return (a,newq))
                        (return (a,[]))
