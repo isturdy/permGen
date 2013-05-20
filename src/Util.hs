@@ -2,6 +2,7 @@
 
 module Util where
 
+import           Data.List
 import qualified Data.Vector.Generic as V
 import           Data.Vector.Unboxed (Vector)
 
@@ -17,3 +18,7 @@ facts = V.generate 15 (\n -> product [1..n])
 fact :: Int -> Int
 fact = (facts V.!)
 {-# INLINABLE fact #-}
+
+place :: Int -> a -> [a] -> [a]
+place p e l = h ++ (e:t)
+  where (h,t) = splitAt p l

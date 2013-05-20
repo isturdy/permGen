@@ -4,6 +4,7 @@
 
 module Array where
 
+import           Control.Arrow
 import           Data.Queue.Simple
 import qualified Data.Vector.Generic         as V
 import           Data.Vector.Unboxed         (Vector)
@@ -54,12 +55,14 @@ search n = U.create $ do
                     S -> [(newp,news,U)]
                     U -> [(newp,news,U), (newp,news,S)]
 
-longest :: Vector Steps -> (Perm,Integer)
-longest = (idPerm 0,) . V.foldl' ((. slength) . max) 0
+longest :: Int -> Vector Steps -> (Perm,Integer)
+longest len = first (pUnIndex len) . V.ifoldl' smax (0,0)
+  where smax (p,l) i s = let sl = slength s
+                         in if sl < l then (p,l) else (i,sl)
 
 move :: Step -> Perm -> Perm
 move S = swap
 move U = unrot
 
 showLongest :: Word8 -> String
-showLongest = show . longest . search
+showLongest l = show . (longest (fromIntegral l)) $ search l
