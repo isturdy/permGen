@@ -12,6 +12,7 @@ import qualified Data.Vector.Unboxed.Mutable as MU
 import           GHC.Word
 
 import           Util
+import           VPerm
 
 --Representation of steps taken
 data Step = S

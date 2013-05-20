@@ -7,6 +7,7 @@ import           Data.Queue.Simple
 import           GHC.Word
 import           Prelude           hiding (map)
 
+import           BSPerm
 import           Util
 
 --Representation of steps taken

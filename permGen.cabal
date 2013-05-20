@@ -30,6 +30,8 @@ library
     Map
     Array
     Util
+    VPerm
+    BSPerm
   GHC-Options:
     -Wall
   build-depends:
