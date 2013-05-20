@@ -29,6 +29,7 @@ library
   exposed-modules:
     Map
     Array
+    Util
   GHC-Options:
     -Wall
   build-depends:

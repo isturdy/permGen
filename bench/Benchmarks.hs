@@ -21,4 +21,5 @@ mkGroup nm f = bgroup nm [
     bench "5" $ nf f 5
   , bench "6" $ nf f 6
   , bench "7" $ nf f 7
+  , bench "8" $ nf f 8
   ]
