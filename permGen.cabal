@@ -21,6 +21,7 @@ executable permgen
     base ==4.6.*,
     bytestring ==0.10.*,
     containers ==0.5.*,
+    critbit ==0.1.0.0,
     q ==0.1.*,
     vector == 0.10.0.*
 
@@ -29,6 +30,8 @@ library
   exposed-modules:
     Map
     Array
+    CritBit
+  other-modules:
     Util
     VPerm
     BSPerm
@@ -38,6 +41,7 @@ library
     base ==4.6.*,
     bytestring ==0.10.*,
     containers ==0.5.*,
+    critbit ==0.1.0.0,
     q ==0.1.*,
     vector == 0.10.0.*
 
