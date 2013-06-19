@@ -30,6 +30,7 @@ library
   exposed-modules:
     Map
     Array
+    ArraySimple
     CritBit
   other-modules:
     Util

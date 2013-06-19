@@ -4,12 +4,14 @@ import           Criterion.Config
 import           Criterion.Main
 
 import qualified Array            as A
+import qualified ArraySimple      as AS
 import qualified CritBit          as C
 import qualified Map              as M
 
 main = defaultMainWith myConfig (return ())  [
     mkGroup "map" M.showLongest
   , mkGroup "array" A.showLongest
+  , mkGroup "arraySimple" AS.showLongest
   , mkGroup "critbit" C.showLongest
   ]
 

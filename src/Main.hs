@@ -4,6 +4,7 @@ import           GHC.Word
 import           System.Environment
 
 import qualified Array              as A
+import qualified ArraySimple        as AS
 import qualified CritBit            as C
 import qualified Map                as M
 
@@ -11,6 +12,7 @@ handlers :: [(String, Word8 -> String)]
 handlers = [
     ("map",   M.showLongest)
   , ("array", A.showLongest)
+  , ("arraySimple", AS.showLongest)
   , ("critbit", C.showLongest)
   ]
 
