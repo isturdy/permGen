@@ -22,3 +22,4 @@ fact = (facts V.!)
 place :: Int -> a -> [a] -> [a]
 place p e l = h ++ (e:t)
   where (h,t) = splitAt p l
+{-# INLINABLE place #-}

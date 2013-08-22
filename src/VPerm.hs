@@ -68,3 +68,4 @@ pUnIndex l n = Perm . V.fromList . foldl' (flip $ uncurry place) [1]
   where factorials 0 _ a = a
         factorials f i a = let (m,r) = i `divMod` (fact f)
                            in factorials (f-1) r (m:a)
+{-# INLINABLE pUnIndex #-}
