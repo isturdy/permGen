@@ -14,7 +14,7 @@ newtype Perm = Perm (U.Vector Word8)
 
 instance Show Perm where
   show (Perm v) = "Perm \"(" ++
-                 (intersperse ' ' $ V.foldr ((:).head.show) [] v) ++ ")\""
+                 (V.foldr ((\s a -> s ++ (' ':a)).show) [] v) ++ ")\""
 
 withinPerm :: (U.Vector Word8 -> U.Vector Word8) -> Perm -> Perm
 withinPerm f (Perm v) = Perm $ f v
