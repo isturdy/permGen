@@ -4,6 +4,7 @@ import           GHC.Word
 import           System.Environment
 
 import qualified Array              as A
+import qualified ArrayFast          as AF
 import qualified ArraySimple        as AS
 import qualified CritBit            as C
 import qualified Map                as M
@@ -13,6 +14,7 @@ handlers = [
     ("map",   M.showLongest)
   , ("array", A.showLongest)
   , ("arraySimple", AS.showLongest)
+  , ("arrayFast", AF.showLongest)
   , ("critbit", C.showLongest)
   ]
 

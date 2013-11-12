@@ -44,6 +44,19 @@ unrot = withinPerm mut
           return v'
 {-# INLINABLE unrot #-}
 
+rot :: Perm -> Perm
+rot = withinPerm mut
+  where mut v = U.create $ do
+          let end = (U.length v) - 1
+          let h = v U.! end
+          v' <- U.thaw v
+          let hv = MU.unsafeSlice 1 end v'
+          let tv = MU.unsafeSlice 0 end v'
+          MU.move hv tv
+          MU.write v' 0 h
+          return v'
+{-# INLINABLE rot #-}
+
 -- Exact integer encoding of permutations of up to 20 items
 -- The index is the number of positions to the left of each n with value
 -- less than n times $(n-1)!$ for n up to the length of the permutation.
